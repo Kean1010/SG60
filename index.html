@@ -3,40 +3,48 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Path to Progress: A Game About Singapore's History</title>
-  <link rel="stylesheet" href="styles.css">
+  <title>Singapore City Builder</title>
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="game-container">
-    <!-- Header -->
-    <h1>Path to Progress: A Game About Singapore's History</h1>
+  <h1>Singapore City Builder</h1>
 
-    <!-- Metrics Display -->
-    <div class="metrics">
-      <p id="gdp">GDP: $0.50B</p>
-      <p id="population">Population: 0.94M</p>
-      <p id="ffi">Foreign Friendliness Index: 50</p>
-    </div>
-
-    <!-- Scenario Display -->
-    <div class="scenario">
-      <img id="scenario-image" src="images/placeholder.png" alt="Scenario Image">
-      <p id="scenario-text"></p>
-    </div>
-
-    <!-- Decision Buttons -->
-    <div class="choices">
-      <button id="choice-a" onclick="makeDecision('A')">Option A</button>
-      <button id="choice-b" onclick="makeDecision('B')">Option B</button>
-      <button id="choice-c" onclick="makeDecision('C')">Option C</button>
-    </div>
-
-    <!-- Feedback Section -->
-    <div class="feedback">
-      <p id="feedback-text"></p>
-    </div>
+  <!-- Unlocked Features -->
+  <div id="unlocks">
+    <h2>Unlocked Features</h2>
+    <div id="unlock-buttons"></div>
   </div>
 
+  <!-- Game Stats -->
+  <div id="stats">
+    <p id="money">Money: SGD 500</p>
+    <p id="population">Population: 50</p>
+    <p id="happiness">Happiness: 100%</p>
+    <p id="innovation">Innovation Points: 0</p>
+    <p id="happiness-indicator">😄</p>
+  </div>
+
+  <!-- Interactive Map -->
+  <div id="map"></div>
+
+  <!-- Buildings Section -->
+  <div id="buildings">
+    <h2>Buildings</h2>
+  </div>
+
+  <!-- Population Icons -->
+  <div id="population-icons" style="position: absolute; top: 0; left: 0;"></div>
+
+  <!-- Pollution Clouds -->
+  <div id="pollution-clouds" style="position: absolute; top: 0; left: 0;"></div>
+
+  <!-- Event Log -->
+  <div id="event-log">
+    <h2>Event Log</h2>
+    <ul id="log"></ul>
+  </div>
+
+  <!-- Script -->
   <script src="script.js"></script>
 </body>
 </html>
