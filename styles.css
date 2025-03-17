@@ -1,0 +1,89 @@
+/* General Styles */
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9; /* Light gray background */
+  color: #333; /* Dark text color */
+  text-align: center; /* Center-align all content */
+}
+
+.game-container {
+  max-width: 600px; /* Limit width for better mobile display */
+  margin: 20px auto; /* Center the container */
+  padding: 20px; /* Add padding inside the container */
+  background: #fff; /* White background for the game area */
+  border-radius: 8px; /* Rounded corners */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+}
+
+h1 {
+  font-size: 24px; /* Larger font size for the title */
+  margin-bottom: 20px; /* Space below the title */
+}
+
+/* Metrics Section */
+.metrics {
+  margin-bottom: 20px; /* Space below the metrics */
+  font-size: 16px; /* Medium font size for metrics */
+  color: #555; /* Slightly muted text color */
+}
+
+.metrics p {
+  margin: 5px 0; /* Minimal spacing between metric lines */
+}
+
+/* Scenario Display */
+.scenario img {
+  max-width: 100%; /* Ensure image fits within the container */
+  height: auto; /* Maintain aspect ratio */
+  border-radius: 8px; /* Rounded corners for images */
+  margin-bottom: 10px; /* Space below the image */
+}
+
+.scenario p {
+  font-size: 16px; /* Medium font size for scenario text */
+  margin-bottom: 20px; /* Space below the scenario description */
+}
+
+/* Decision Buttons */
+.choices button {
+  display: block; /* Stack buttons vertically */
+  width: 80%; /* Button width (80% of container) */
+  margin: 10px auto; /* Center buttons with spacing */
+  padding: 10px; /* Padding inside buttons */
+  font-size: 16px; /* Font size for button text */
+  background-color: #007bff; /* Blue background for buttons */
+  color: white; /* White text color */
+  border: none; /* No borders */
+  border-radius: 5px; /* Rounded corners */
+  cursor: pointer; /* Pointer cursor on hover */
+}
+
+.choices button:hover {
+  background-color: #0056b3; /* Darker blue on hover */
+}
+
+/* Feedback Section */
+.feedback {
+  margin-top: 20px; /* Space above feedback text */
+  font-style: italic; /* Italicize feedback text */
+}
+
+/* Responsive Design for Mobile */
+@media (max-width: 600px) {
+  h1 {
+    font-size: 20px; /* Smaller font size for mobile */
+  }
+
+  .metrics p,
+  .scenario p,
+  .feedback p {
+    font-size: 14px; /* Smaller text for mobile */
+  }
+
+  .choices button {
+    width: 90%; /* Wider buttons for easier tapping on mobile */
+    font-size: 14px; /* Smaller font size for buttons */
+  }
+}
