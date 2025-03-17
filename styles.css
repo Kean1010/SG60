@@ -1,89 +1,170 @@
 /* General Styles */
 body {
   font-family: Arial, sans-serif;
-  margin: 0;
-  padding: 0;
-  background-color: #f4f4f9; /* Light gray background */
-  color: #333; /* Dark text color */
-  text-align: center; /* Center-align all content */
-}
-
-.game-container {
-  max-width: 600px; /* Limit width for better mobile display */
-  margin: 20px auto; /* Center the container */
-  padding: 20px; /* Add padding inside the container */
-  background: #fff; /* White background for the game area */
-  border-radius: 8px; /* Rounded corners */
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow for depth */
+  margin: 20px;
+  background-color: #f4f4f4;
+  color: #333;
 }
 
 h1 {
-  font-size: 24px; /* Larger font size for the title */
-  margin-bottom: 20px; /* Space below the title */
+  text-align: center;
+  color: #333;
 }
 
-/* Metrics Section */
-.metrics {
-  margin-bottom: 20px; /* Space below the metrics */
-  font-size: 16px; /* Medium font size for metrics */
-  color: #555; /* Slightly muted text color */
+#stats {
+  margin-bottom: 20px;
 }
 
-.metrics p {
-  margin: 5px 0; /* Minimal spacing between metric lines */
+#unlocks {
+  margin-bottom: 20px;
 }
 
-/* Scenario Display */
-.scenario img {
-  max-width: 100%; /* Ensure image fits within the container */
-  height: auto; /* Maintain aspect ratio */
-  border-radius: 8px; /* Rounded corners for images */
-  margin-bottom: 10px; /* Space below the image */
+/* Interactive Map */
+#map {
+  position: relative;
+  width: 100%;
+  height: 400px; /* Adjusted height to accommodate larger images */
+  background-color: #e0e0e0;
+  border: 1px solid #ccc;
+  margin-bottom: 20px;
 }
 
-.scenario p {
-  font-size: 16px; /* Medium font size for scenario text */
-  margin-bottom: 20px; /* Space below the scenario description */
+.zone {
+  position: absolute;
+  width: 100px; /* Updated size */
+  height: 100px; /* Updated size */
+  cursor: pointer;
+  z-index: 10; /* Ensure zones are clickable */
 }
 
-/* Decision Buttons */
-.choices button {
-  display: block; /* Stack buttons vertically */
-  width: 80%; /* Button width (80% of container) */
-  margin: 10px auto; /* Center buttons with spacing */
-  padding: 10px; /* Padding inside buttons */
-  font-size: 16px; /* Font size for button text */
-  background-color: #007bff; /* Blue background for buttons */
-  color: white; /* White text color */
-  border: none; /* No borders */
-  border-radius: 5px; /* Rounded corners */
-  cursor: pointer; /* Pointer cursor on hover */
+.zone.residential {
+  top: 10%; /* Adjusted positions for larger images */
+  left: 10%;
 }
 
-.choices button:hover {
-  background-color: #0056b3; /* Darker blue on hover */
+.zone.industrial {
+  top: 35%; /* Adjusted positions for larger images */
+  left: 60%;
 }
 
-/* Feedback Section */
-.feedback {
-  margin-top: 20px; /* Space above feedback text */
-  font-style: italic; /* Italicize feedback text */
+.zone.school {
+  top: 65%; /* Adjusted positions for larger images */
+  left: 10%;
 }
 
-/* Responsive Design for Mobile */
-@media (max-width: 600px) {
-  h1 {
-    font-size: 20px; /* Smaller font size for mobile */
-  }
+.zone.tourist {
+  top: 10%; /* Adjusted positions for larger images */
+  left: 60%;
+}
 
-  .metrics p,
-  .scenario p,
-  .feedback p {
-    font-size: 14px; /* Smaller text for mobile */
-  }
+.zone.mrt {
+  top: 65%; /* Adjusted positions for larger images */
+  left: 60%;
+}
 
-  .choices button {
-    width: 90%; /* Wider buttons for easier tapping on mobile */
-    font-size: 14px; /* Smaller font size for buttons */
-  }
+.zone img {
+  width: 100%; /* Ensures the image fills the zone */
+  height: 100%; /* Ensures the image fills the zone */
+  object-fit: cover; /* Ensures proper scaling */
+  border-radius: 5px;
+}
+
+/* Hover Effect for Zones */
+.zone:hover {
+  border: 2px solid yellow;
+}
+/* Animations */
+.crane, .smoke, .books, .fireworks, .train, .person, .cloud, .protester, .picket-sign, .virus, .coins, .tourist {
+  position: absolute;
+  font-size: 2rem;
+  animation: fadeInOut 2s ease-in-out;
+}
+
+@keyframes fadeInOut {
+  0% { opacity: 0; transform: scale(0.5); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.5); }
+}
+
+/* Event Log */
+#event-log {
+  margin-top: 20px;
+}
+
+#log {
+  max-height: 200px;
+  overflow-y: auto;
+  list-style-type: none;
+  padding: 0;
+}
+
+#log li {
+  margin-bottom: 5px;
+  font-size: 0.9em;
+  color: #555;
+}
+
+/* Buttons */
+button {
+  display: block;
+  margin: 5px 0;
+  padding: 10px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+button:hover {
+  filter: brightness(1.1);
+}
+
+button:active {
+  filter: brightness(0.9);
+}
+
+/* Unlock Buttons */
+#unlock-buttons button {
+  background-color: lightgreen;
+  color: black;
+}
+
+/* God Mode Button */
+#buildings button:nth-child(1) {
+  background-color: gold;
+  color: black;
+}
+
+/* Toggle Sound Button */
+#buildings button:nth-child(2) {
+  background-color: lightblue;
+  color: black;
+}
+
+/* Population Icons */
+#population-icons div {
+  position: absolute;
+  font-size: 1.5rem;
+  color: blue;
+  animation: float 5s infinite ease-in-out;
+}
+
+@keyframes float {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+
+/* Pollution Clouds */
+#pollution-clouds div {
+  position: absolute;
+  font-size: 2rem;
+  color: gray;
+  animation: drift 10s infinite linear;
+}
+
+@keyframes drift {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(200px); }
 }
