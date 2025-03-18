@@ -28,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
   godModeButton.style.backgroundColor = "gold";
   godModeButton.style.color = "black";
   godModeButton.onclick = activateGodMode;
+  godModeButton.style.display = 'none'; // Hidden by default
   document.getElementById('buildings').appendChild(godModeButton);
 
   // Add Toggle Sound Button
@@ -54,6 +55,22 @@ document.addEventListener('DOMContentLoaded', () => {
   // Start Idle Income Generation
   startIdleIncome();
 });
+
+
+// Function to toggle God Mode visibility
+function toggleGodModeVisibility() {
+  const godModeButton = document.querySelector('#buildings button[onclick="activateGodMode"]');
+  if (godModeButton) {
+    if (godModeButton.style.display === 'none') {
+      godModeButton.style.display = 'inline-block'; // Show the button
+    } else {
+      godModeButton.style.display = 'none'; // Hide the button
+    }
+  }
+}
+
+
+
 
 // Start Idle Income Generation
 function startIdleIncome() {
