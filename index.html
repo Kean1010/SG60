@@ -3,48 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Singapore City Builder</title>
-  <link rel="stylesheet" href="style.css">
+  <title>City Builder Game</title>
+  <link rel="stylesheet" href="style.css"> <!-- Link to your CSS file -->
 </head>
 <body>
-  <h1>Singapore City Builder</h1>
+  <header>
+    <h1>City Builder Game</h1>
+  </header>
 
-  <!-- Unlocked Features -->
-  <div id="unlocks">
-    <h2>Unlocked Features</h2>
-    <div id="unlock-buttons"></div>
-  </div>
+  <main>
+    <!-- Game Stats -->
+    <section id="stats">
+      <p id="money">Money: SGD 500</p>
+      <p id="population">Population: 50</p>
+      <p id="happiness">Happiness: 100%</p>
+      <p id="innovation">Innovation Points: 0</p>
+      <p id="pollution">Pollution Level: 0</p>
+    </section>
 
-  <!-- Game Stats -->
-  <div id="stats">
-    <p id="money">Money: SGD 500</p>
-    <p id="population">Population: 50</p>
-    <p id="happiness">Happiness: 100%</p>
-    <p id="innovation">Innovation Points: 0</p>
-    <p id="happiness-indicator">😄</p>
-  </div>
+    <!-- Map Section -->
+    <section id="map-container">
+      <h2>City Map</h2>
+      <div id="map"></div>
+    </section>
 
-  <!-- Interactive Map -->
-  <div id="map"></div>
+    <!-- Buildings Section -->
+    <section id="buildings">
+      <h2>Buildings</h2>
+      <!-- God Mode and Sound Buttons will be dynamically added here -->
+    </section>
 
-  <!-- Buildings Section -->
-  <div id="buildings">
-    <h2>Buildings</h2>
-  </div>
 
-  <!-- Population Icons -->
-  <div id="population-icons" style="position: absolute; top: 0; left: 0;"></div>
+    <!-- Event Log -->
+    <section id="log-section">
+      <h2>Event Log</h2>
+      <ul id="log"></ul>
+    </section>
+  </main>
 
-  <!-- Pollution Clouds -->
-  <div id="pollution-clouds" style="position: absolute; top: 0; left: 0;"></div>
-
-  <!-- Event Log -->
-  <div id="event-log">
-    <h2>Event Log</h2>
-    <ul id="log"></ul>
-  </div>
-
-  <!-- Script -->
-  <script src="script.js"></script>
+  <!-- JavaScript Files -->
+  <script src="utils.js"></script>
+  <script src="building.js"></script>
+  <script src="main.js"></script>
 </body>
 </html>
