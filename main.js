@@ -176,18 +176,31 @@ function activateGodMode() {
   updateStats();
 }
 
-// Reduce Pollution Using Innovation Points
+
+
+// Reduce Pollution Using Innovation Points and Money
 function reducePollution() {
-  const cost = 10; // Cost in Innovation Points
+  const innovationCost = 10; // Cost in Innovation Points
+  const moneyCost = 500; // Cost in money (SGD)
   const reduction = 10; // Reduction in Pollution Points
 
-  if (innovationPoints >= cost) {
-    innovationPoints -= cost;
+  // Check if the player has enough Innovation Points and money
+  if (innovationPoints >= innovationCost && money >= moneyCost) {
+    // Deduct costs
+    innovationPoints -= innovationCost;
+    money -= moneyCost;
+
+    // Reduce pollution
     pollution = Math.max(0, pollution - reduction); // Ensure pollution doesn't go below 0
-    logEvent(`Reduced pollution by ${reduction} points using ${cost} Innovation Points.`);
+
+    // Log the event
+    logEvent(`Reduced pollution by ${reduction} points using ${innovationCost} Innovation Points and $${moneyCost}.`);
+
+    // Update stats
     updateStats();
   } else {
-    logEvent("Not enough Innovation Points to reduce pollution!");
+    // Log an error message if the player lacks resources
+    logEvent("Not enough Innovation Points and/or money to reduce pollution!");
     playSound('assets/sounds/sad_sound.mp3'); // Play negative sound
   }
 }
