@@ -11,6 +11,11 @@
       margin: 0;
       padding: 0;
       background: #f4f4f4;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
     }
 
     .year-header {
@@ -48,19 +53,24 @@
 
     .video-container {
       position: relative;
-      width: 100%;
+      width: 90%;
       max-width: 800px;
-      margin: auto;
+    }
+
+    .video-container video {
+      width: 100%;
+      height: auto;
+      pointer-events: none;
     }
 
     .options {
       display: none;
       position: absolute;
-      bottom: 20px;
-      left: 0;
-      right: 0;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
       text-align: center;
-      z-index: 2;
+      z-index: 3;
     }
 
     .options button {
@@ -108,7 +118,7 @@
   <button class="back-button" onclick="location.href='index.html'">← Back to Main Page</button>
 
   <div class="video-container">
-    <video id="video" width="100%" controls autoplay>
+    <video id="video" preload="auto" autoplay muted>
       <source src="lkyiron.mp4" type="video/mp4" />
       Your browser does not support HTML5 video.
     </video>
@@ -127,6 +137,15 @@
     const options = document.getElementById('options');
     const coin = document.getElementById('coin');
 
+    // Prevent seeking
+    let lastTime = 0;
+    video.addEventListener('timeupdate', () => {
+      if (video.currentTime > lastTime + 0.5) {
+        video.currentTime = lastTime;
+      }
+      lastTime = video.currentTime;
+    });
+
     video.onended = () => {
       options.style.display = 'block';
     };
@@ -141,7 +160,7 @@
         addCoin();
         alert('You earned a 🪙 Merlion Coin!');
       } else {
-        alert('You opposed the decision. No coin awarded.');
+        alert('No coin awarded.');
       }
 
       options.style.display = 'none';
@@ -150,6 +169,7 @@
     window.onload = () => {
       updateInventoryDisplay();
       coin.style.display = 'none';
+      lastTime = 0;
     };
   </script>
 </body>
