@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>1980</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 0;
+      padding: 0;
+      background: #f4f4f4;
+    }
+
+    .year-header {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      font-size: 24px;
+      font-weight: bold;
+      z-index: 2;
+    }
+
+    #inventory {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 18px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 5px 10px;
+      border-radius: 8px;
+      z-index: 2;
+    }
+
+    .back-button {
+      position: absolute;
+      top: 60px;
+      left: 10px;
+      background: #fff;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 14px;
+      cursor: pointer;
+      z-index: 2;
+      border: 1px solid #ccc;
+    }
+
+    .video-container {
+      position: relative;
+      width: 100%;
+      max-width: 800px;
+      margin: auto;
+    }
+
+    .options {
+      display: none;
+      position: absolute;
+      bottom: 20px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      z-index: 2;
+    }
+
+    .options button {
+      padding: 12px 24px;
+      margin: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      border: none;
+      border-radius: 8px;
+      background-color: #0077cc;
+      color: white;
+      transition: background-color 0.3s ease;
+    }
+
+    .options button:hover {
+      background-color: #005fa3;
+    }
+
+    .coin-animation {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 40px;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+    }
+
+    @keyframes floatUp {
+      0% {
+        transform: translateX(-50%) translateY(0);
+        opacity: 1;
+      }
+      100% {
+        transform: translateX(-50%) translateY(-150px);
+        opacity: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="year-header">1980</div>
+  <div id="inventory">🪙 Merlion Coins: 0</div>
+  <button class="back-button" onclick="location.href='index.html'">← Back to Main Page</button>
+
+  <div class="video-container">
+    <video id="video" width="100%" controls autoplay>
+      <source src="lkyiron.mp4" type="video/mp4" />
+      Your browser does not support HTML5 video.
+    </video>
+
+    <div id="options" class="options">
+      <button onclick="selectOption(1)">Yes, I support him</button>
+      <button onclick="selectOption(2)">No, oppose him</button>
+    </div>
+
+    <div id="coin" class="coin-animation">🪙</div>
+  </div>
+
+  <script src="script.js"></script>
+  <script>
+    const video = document.getElementById('video');
+    const options = document.getElementById('options');
+    const coin = document.getElementById('coin');
+
+    video.onended = () => {
+      options.style.display = 'block';
+    };
+
+    function selectOption(option) {
+      if (option === 1) {
+        coin.style.display = 'block';
+        coin.style.animation = 'none';
+        void coin.offsetWidth;
+        coin.style.animation = 'floatUp 1.2s ease-out forwards';
+
+        addCoin();
+        alert('You earned a 🪙 Merlion Coin!');
+      } else {
+        alert('You opposed the decision. No coin awarded.');
+      }
+
+      options.style.display = 'none';
+    }
+
+    window.onload = () => {
+      updateInventoryDisplay();
+      coin.style.display = 'none';
+    };
+  </script>
+</body>
+</html>
