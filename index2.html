@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>360 Photo Viewer</title>
+    <style>
+        body { margin: 0; overflow: hidden; }
+        canvas { display: block; width: 100%; height: 100%; }
+        #info { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 5px; }
+        #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; }
+    </style>
+</head>
+<body>
+    <div id="info">Drag to rotate, scroll/pinch to zoom</div>
+    <div id="error" style="display: none;">WebGL not supported or Three.js failed to load.</div>
+    <script type="module">
+        // Import Three.js and OrbitControls
+        import * as THREE from 'https://cdnjs[ext].cloudflare.com/ajax/libs/three.js/r168/three.module.js';
+        import { OrbitControls } from 'https://unpkg.com/three@0.168.0/examples/jsm/controls/OrbitControls.js';
+
+        // Check WebGL support
+        if (!THREE.WEBGL.isWebGLAvailable()) {
+            document.getElementById('error').style.display = 'block';
+            throw new Error('WebGL not supported');
+        }
+
+        // Initialize scene, camera, and renderer
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        document.body.appendChild(renderer.domElement);
+
+        // Load the equirectangular image
+        const textureLoader = new THREE.TextureLoader();
+        textureLoader.load('panorama.jpg', function (texture) {
+            console.log('Texture loaded successfully');
+            // Create a sphere geometry (inside-out)
+            const geometry = new THREE.SphereGeometry(500, 60, 40);
+            geometry.scale(-1, 1, 1); // Flip to show texture inside
+
+            // Create material with texture
+            const material = new THREE.MeshBasicMaterial({
+                map: texture,
+                side: THREE.DoubleSide
+            });
+
+            // Create mesh and add to scene
+            const sphere = new THREE.Mesh(geometry, material);
+            scene.add(sphere);
+        }, undefined, function (error) {
+            console.error('Error loading texture:', error);
+            document.getElementById('error').style.display = 'block';
+        });
+
+        // Position camera inside the sphere
+        camera.position.set(0, 0, 0);
+
+        // Initialize OrbitControls
+        const controls = new OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // Smooth rotation
+        controls.dampingFactor = 0.05;
+        controls.rotateSpeed = 0.5;
+        controls.enableZoom = true;
+        controls.zoomSpeed = 1.2;
+        controls.enablePan = false; // Disable panning to keep camera centered
+        controls.minDistance = 1; // Prevent zooming too close
+        controls.maxDistance = 500; // Prevent zooming too far
+        controls.autoRotate = false;
+        console.log('OrbitControls initialized');
+
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // Animation loop
+        function animate() {
+            requestAnimationFrame(animate);
+            controls.update(); // Update controls each frame
+            renderer.render(scene, camera);
+        }
+        animate();
+
+        // Log interaction events for debugging
+        renderer.domElement.addEventListener('mousedown', () => console.log('Mouse down'));
+        renderer.domElement.addEventListener('mousemove', () => console.log('Mouse move'));
+        renderer.domElement.addEventListener('touchstart', () => console.log('Touch start'));
+    </script>
+</body>
+</html>
