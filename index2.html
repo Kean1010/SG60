@@ -9,11 +9,45 @@
         canvas { display: block; width: 100%; height: 100%; }
         #info { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 5px; }
         #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; text-align: center; }
+        #text-display { 
+            position: absolute; 
+            top: 50%; 
+            left: 50%; 
+            transform: translate(-50%, -50%); 
+            color: white; 
+            font-size: 24px; 
+            font-family: Arial, sans-serif;
+            background: rgba(0,0,0,0.7); 
+            padding: 10px 20px; 
+            border-radius: 5px; 
+            display: none; 
+            pointer-events: none; 
+            z-index: 10;
+        }
+        .overlay-button {
+            position: absolute;
+            bottom: 20px;
+            padding: 10px 20px;
+            font-size: 16px;
+            color: white;
+            background: rgba(0, 0, 255, 0.7);
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            z-index: 10;
+        }
+        #button1 { left: 20px; }
+        #button2 { left: 120px; }
+        #button3 { left: 220px; }
     </style>
 </head>
 <body>
     <div id="info">Drag to rotate, scroll/pinch to zoom</div>
     <div id="error" style="display: none;">Error: Failed to load resources. Check console for details.</div>
+    <div id="text-display"></div>
+    <button id="button1" class="overlay-button">Button 1</button>
+    <button id="button2" class="overlay-button">Button 2</button>
+    <button id="button3" class="overlay-button">Button 3</button>
     <script src="three.min.js"></script>
     <script>
         // Verify Three.js loaded
@@ -113,6 +147,21 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
             console.log('Window resized');
         });
+
+        // Button interaction
+        const textDisplay = document.getElementById('text-display');
+        function showText() {
+            textDisplay.textContent = 'hello World';
+            textDisplay.style.display = 'block';
+            console.log('Button clicked, displaying: hello World');
+            setTimeout(() => {
+                textDisplay.style.display = 'none';
+                console.log('Text hidden');
+            }, 3000); // Hide after 3 seconds
+        }
+        document.getElementById('button1').addEventListener('click', showText);
+        document.getElementById('button2').addEventListener('click', showText);
+        document.getElementById('button3').addEventListener('click', showText);
 
         // Animation loop
         function animate() {
