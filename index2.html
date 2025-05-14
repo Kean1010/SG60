@@ -13,14 +13,21 @@
 </head>
 <body>
     <div id="info">Drag to rotate, scroll/pinch to zoom</div>
-    <div id="error" style="display: none;">WebGL not supported or Three.js failed to load.</div>
-    <script type="module">
-        // Import Three.js and OrbitControls
-        import * as THREE from 'https://cdnjs[ext].cloudflare.com/ajax/libs/three.js/r168/three.module.js';
-        import { OrbitControls } from 'https://unpkg.com/three@0.168.0/examples/jsm/controls/OrbitControls.js';
-
+    <div id="error" style="display: none;">Error: WebGL not supported or Three.js failed to load.</div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r168/three.min.js"></script>
+    <script>
+        // Verify Three.js loaded
+        if (typeof THREE === 'undefined') {
+            console.error('Three.js failed to load');
+            document.getElementById('error').textContent = 'Error: Failed to load Three.js. Check your internet or try a local copy.';
+            throw new Error('Three.js not loaded');
+        }
+        console.log('Three.js loaded successfully');
+    </script>
+    <script src="https://unpkg.com/three@0.168.0/examples/jsm/controls/OrbitControls.js"></script>
+    <script>
         // Check WebGL support
-        if (!THREE.WEBGL.isWebGLAvailable()) {
+        if (!THREE.WebGLRenderer) {
             document.getElementById('error').style.display = 'block';
             throw new Error('WebGL not supported');
         }
@@ -52,6 +59,7 @@
             scene.add(sphere);
         }, undefined, function (error) {
             console.error('Error loading texture:', error);
+            document.getElementById('error').textContent = 'Error: Failed to load panorama.jpg. Ensure the file exists.';
             document.getElementById('error').style.display = 'block';
         });
 
@@ -59,7 +67,7 @@
         camera.position.set(0, 0, 0);
 
         // Initialize OrbitControls
-        const controls = new OrbitControls(camera, renderer.domElement);
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true; // Smooth rotation
         controls.dampingFactor = 0.05;
         controls.rotateSpeed = 0.5;
