@@ -14,23 +14,23 @@
 <body>
     <div id="info">Drag to rotate, scroll/pinch to zoom</div>
     <div id="error" style="display: none;">Error: Failed to load resources. Check console for details.</div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r168/three.min.js"></script>
+    <script src="three.min.js"></script>
     <script>
         // Verify Three.js loaded
         if (typeof THREE === 'undefined') {
-            console.error('Three.js failed to load from CDN');
-            document.getElementById('error').textContent = 'Error: Failed to load Three.js. Check your internet or use local scripts.';
+            console.error('Three.js failed to load');
+            document.getElementById('error').textContent = 'Error: Failed to load three.min.js. Ensure the file is in the same folder as index2.html.';
             document.getElementById('error').style.display = 'block';
             throw new Error('Three.js not loaded');
         }
         console.log('Three.js loaded successfully');
     </script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
+    <script src="OrbitControls.js"></script>
     <script>
         // Verify OrbitControls loaded
         if (typeof THREE.OrbitControls === 'undefined') {
             console.error('OrbitControls failed to load');
-            document.getElementById('error').textContent = 'Error: Failed to load OrbitControls. Check console.';
+            document.getElementById('error').textContent = 'Error: Failed to load OrbitControls.js. Ensure the file is in the same folder as index2.html.';
             document.getElementById('error').style.display = 'block';
             throw new Error('OrbitControls not loaded');
         }
@@ -80,11 +80,11 @@
                 console.log('Sphere added to scene');
             },
             function (progress) {
-                console.log('Texture loading progress:', progress.loaded / progress.total * 100 + '%');
+                console.log('Texture loading progress:', (progress.loaded / progress.total * 100).toFixed(2) + '%');
             },
             function (error) {
                 console.error('Error loading texture:', error);
-                document.getElementById('error').textContent = 'Error: Failed to load panorama.jpg. Ensure the file exists in the correct folder.';
+                document.getElementById('error').textContent = 'Error: Failed to load panorama.jpg. Ensure the file is in the same folder as index2.html.';
                 document.getElementById('error').style.display = 'block';
             }
         );
