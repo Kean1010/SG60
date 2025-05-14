@@ -5,77 +5,104 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>360 Photo Viewer</title>
     <style>
-        body { margin: 0; overflow: hidden; }
+        body { margin: 0; overflow: hidden; background: #000; }
         canvas { display: block; width: 100%; height: 100%; }
         #info { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 5px; }
-        #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; }
+        #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; text-align: center; }
     </style>
 </head>
 <body>
     <div id="info">Drag to rotate, scroll/pinch to zoom</div>
-    <div id="error" style="display: none;">Error: WebGL not supported or Three.js failed to load.</div>
+    <div id="error" style="display: none;">Error: Failed to load resources. Check console for details.</div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r168/three.min.js"></script>
     <script>
         // Verify Three.js loaded
         if (typeof THREE === 'undefined') {
-            console.error('Three.js failed to load');
-            document.getElementById('error').textContent = 'Error: Failed to load Three.js. Check your internet or try a local copy.';
+            console.error('Three.js failed to load from CDN');
+            document.getElementById('error').textContent = 'Error: Failed to load Three.js. Check your internet or use local scripts.';
+            document.getElementById('error').style.display = 'block';
             throw new Error('Three.js not loaded');
         }
         console.log('Three.js loaded successfully');
     </script>
-    <script src="https://unpkg.com/three@0.168.0/examples/jsm/controls/OrbitControls.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/controls/OrbitControls.js"></script>
     <script>
+        // Verify OrbitControls loaded
+        if (typeof THREE.OrbitControls === 'undefined') {
+            console.error('OrbitControls failed to load');
+            document.getElementById('error').textContent = 'Error: Failed to load OrbitControls. Check console.';
+            document.getElementById('error').style.display = 'block';
+            throw new Error('OrbitControls not loaded');
+        }
+        console.log('OrbitControls loaded successfully');
+
         // Check WebGL support
-        if (!THREE.WebGLRenderer) {
+        if (!window.WebGLRenderingContext) {
+            console.error('WebGL not supported');
+            document.getElementById('error').textContent = 'Error: WebGL not supported by your browser.';
             document.getElementById('error').style.display = 'block';
             throw new Error('WebGL not supported');
         }
 
         // Initialize scene, camera, and renderer
         const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x333333); // Gray background to confirm rendering
         const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
         renderer.setSize(window.innerWidth, window.innerHeight);
         renderer.setPixelRatio(window.devicePixelRatio);
         document.body.appendChild(renderer.domElement);
+        console.log('Renderer initialized');
+
+        // Verify image path
+        const imagePath = 'panorama.jpg';
+        console.log('Attempting to load image:', imagePath);
 
         // Load the equirectangular image
         const textureLoader = new THREE.TextureLoader();
-        textureLoader.load('panorama.jpg', function (texture) {
-            console.log('Texture loaded successfully');
-            // Create a sphere geometry (inside-out)
-            const geometry = new THREE.SphereGeometry(500, 60, 40);
-            geometry.scale(-1, 1, 1); // Flip to show texture inside
+        textureLoader.load(
+            imagePath,
+            function (texture) {
+                console.log('Texture loaded successfully');
+                // Create a sphere geometry (inside-out)
+                const geometry = new THREE.SphereGeometry(500, 60, 40);
+                geometry.scale(-1, 1, 1); // Flip to show texture inside
 
-            // Create material with texture
-            const material = new THREE.MeshBasicMaterial({
-                map: texture,
-                side: THREE.DoubleSide
-            });
+                // Create material with texture
+                const material = new THREE.MeshBasicMaterial({
+                    map: texture,
+                    side: THREE.DoubleSide
+                });
 
-            // Create mesh and add to scene
-            const sphere = new THREE.Mesh(geometry, material);
-            scene.add(sphere);
-        }, undefined, function (error) {
-            console.error('Error loading texture:', error);
-            document.getElementById('error').textContent = 'Error: Failed to load panorama.jpg. Ensure the file exists.';
-            document.getElementById('error').style.display = 'block';
-        });
+                // Create mesh and add to scene
+                const sphere = new THREE.Mesh(geometry, material);
+                scene.add(sphere);
+                console.log('Sphere added to scene');
+            },
+            function (progress) {
+                console.log('Texture loading progress:', progress.loaded / progress.total * 100 + '%');
+            },
+            function (error) {
+                console.error('Error loading texture:', error);
+                document.getElementById('error').textContent = 'Error: Failed to load panorama.jpg. Ensure the file exists in the correct folder.';
+                document.getElementById('error').style.display = 'block';
+            }
+        );
 
         // Position camera inside the sphere
         camera.position.set(0, 0, 0);
+        console.log('Camera positioned');
 
         // Initialize OrbitControls
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true; // Smooth rotation
+        controls.enableDamping = true;
         controls.dampingFactor = 0.05;
         controls.rotateSpeed = 0.5;
         controls.enableZoom = true;
         controls.zoomSpeed = 1.2;
-        controls.enablePan = false; // Disable panning to keep camera centered
-        controls.minDistance = 1; // Prevent zooming too close
-        controls.maxDistance = 500; // Prevent zooming too far
+        controls.enablePan = false;
+        controls.minDistance = 1;
+        controls.maxDistance = 500;
         controls.autoRotate = false;
         console.log('OrbitControls initialized');
 
@@ -84,17 +111,19 @@
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
+            console.log('Window resized');
         });
 
         // Animation loop
         function animate() {
             requestAnimationFrame(animate);
-            controls.update(); // Update controls each frame
+            controls.update();
             renderer.render(scene, camera);
         }
         animate();
+        console.log('Animation loop started');
 
-        // Log interaction events for debugging
+        // Log interaction events
         renderer.domElement.addEventListener('mousedown', () => console.log('Mouse down'));
         renderer.domElement.addEventListener('mousemove', () => console.log('Mouse move'));
         renderer.domElement.addEventListener('touchstart', () => console.log('Touch start'));
