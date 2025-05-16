@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>360 Viewer with Hotspots and Mini Map</title>
   <style>
     html, body {
@@ -11,10 +11,12 @@
       height: 100%;
       overflow: hidden;
     }
+
     #viewer {
       width: 100%;
       height: 100%;
     }
+
     #minimap {
       position: absolute;
       bottom: 10px;
@@ -25,6 +27,7 @@
       border: 2px solid #fff;
       border-radius: 10px;
     }
+
     .hotspot {
       width: 32px;
       height: 32px;
@@ -40,26 +43,58 @@
       box-shadow: 0 0 6px rgba(0,0,0,0.5);
       cursor: pointer;
     }
-    #overlay {
+
+    #overlay-bg {
       display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      z-index: 999;
+    }
+
+    #overlay {
       position: absolute;
-      top: 40%;
+      top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
-      background: rgba(0, 0, 0, 0.8);
+      background: rgba(0, 0, 0, 0.95);
       color: white;
       padding: 20px 30px;
       border-radius: 10px;
       font-size: 18px;
-      z-index: 1000;
-      pointer-events: none;
+      max-width: 600px;
+      max-height: 80vh;
+      overflow-y: auto;
+    }
+
+    #overlay button {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: red;
+      border: none;
+      color: white;
+      padding: 5px 10px;
+      cursor: pointer;
+    }
+
+    #overlay img, #overlay video {
+      max-width: 100%;
+      margin-top: 15px;
+      border-radius: 5px;
     }
   </style>
 </head>
 <body>
   <div id="viewer"></div>
   <canvas id="minimap"></canvas>
-  <div id="overlay">Hello World</div>
+
+  <div id="overlay-bg" onclick="hideOverlay()">
+    <div id="overlay" onclick="event.stopPropagation()">
+      <button onclick="hideOverlay()">Close</button>
+      <div id="overlay-content"></div>
+    </div>
+  </div>
 
   <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
@@ -70,9 +105,9 @@
         panorama: 'office.jpg',
         hotspots: [
           { pitch: 10, yaw: 100, type: 'navigation', target: 'room2' },
-          { pitch: 5, yaw: 20, type: 'info' },
-          { pitch: -12, yaw: -145, type: 'info' },
-          { pitch: 15, yaw: 60, type: 'info' }
+          { pitch: 5, yaw: 20, type: 'info', id: 'text' },
+          { pitch: -12, yaw: -145, type: 'info', id: 'image' },
+          { pitch: 15, yaw: 60, type: 'info', id: 'video' }
         ]
       },
       room2: {
@@ -125,24 +160,33 @@
         hotSpotDiv.addEventListener('click', () => switchRoom(args.target));
       } else {
         hotSpotDiv.textContent = 'i';
-        hotSpotDiv.title = 'More info';
-        hotSpotDiv.addEventListener('click', () => showOverlay('Hello World, this pop up just show you it is possible to input text or images over the popups'));
+        hotSpotDiv.title = 'More Info';
+
+        hotSpotDiv.addEventListener('click', () => {
+          if (args.id === 'text') {
+            showOverlay(`<h2>Welcome!</h2><p>This is a simple text-only popup for demonstration purposes.</p>`);
+          } else if (args.id === 'image') {
+            showOverlay(`<h2>Artifact Display</h2><p>This artifact was discovered in 1920.</p><img src="artifact.jpg" alt="Artifact Image">`);
+          } else if (args.id === 'video') {
+            showOverlay(`<h2>Restoration Video</h2><p>Watch how this place was restored over time.</p><video controls><source src="documentary.mp4" type="video/mp4">Your browser does not support the video tag.</video>`);
+          }
+        });
       }
+    }
+
+    function showOverlay(html) {
+      document.getElementById('overlay-content').innerHTML = html;
+      document.getElementById('overlay-bg').style.display = 'block';
+    }
+
+    function hideOverlay() {
+      document.getElementById('overlay-bg').style.display = 'none';
     }
 
     function switchRoom(roomName) {
       currentRoom = roomName;
       viewer.loadScene(roomName);
       drawMiniMap();
-    }
-
-    function showOverlay(text) {
-      const overlay = document.getElementById('overlay');
-      overlay.textContent = text;
-      overlay.style.display = 'block';
-      setTimeout(() => {
-        overlay.style.display = 'none';
-      }, 2000);
     }
 
     function drawMiniMap() {
