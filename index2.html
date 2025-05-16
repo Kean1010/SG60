@@ -1,181 +1,180 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>360 Photo Viewer</title>
-    <style>
-        body { margin: 0; overflow: hidden; background: #000; }
-        canvas { display: block; width: 100%; height: 100%; }
-        #info { position: absolute; top: 10px; left: 10px; color: white; background: rgba(0,0,0,0.7); padding: 5px; }
-        #error { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: red; font-size: 18px; text-align: center; }
-        #text-display { 
-            position: absolute; 
-            top: 50%; 
-            left: 50%; 
-            transform: translate(-50%, -50%); 
-            color: white; 
-            font-size: 24px; 
-            font-family: Arial, sans-serif;
-            background: rgba(0,0,0,0.7); 
-            padding: 10px 20px; 
-            border-radius: 5px; 
-            display: none; 
-            pointer-events: none; 
-            z-index: 10;
-        }
-        .overlay-button {
-            position: absolute;
-            bottom: 20px;
-            padding: 10px 20px;
-            font-size: 16px;
-            color: white;
-            background: rgba(0, 0, 255, 0.7);
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-            z-index: 10;
-        }
-        #button1 { left: 20px; }
-        #button2 { left: 120px; }
-        #button3 { left: 220px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>360 Viewer with Hotspots and Mini Map</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      overflow: hidden;
+    }
+    #viewer {
+      width: 100%;
+      height: 100%;
+    }
+    #minimap {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      width: 150px;
+      height: 150px;
+      background-color: rgba(0, 0, 0, 0.5);
+      border: 2px solid #fff;
+      border-radius: 10px;
+    }
+    .hotspot {
+      width: 32px;
+      height: 32px;
+      background-color: white;
+      border-radius: 50%;
+      border: 2px solid black;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: black;
+      font-family: sans-serif;
+      box-shadow: 0 0 6px rgba(0,0,0,0.5);
+      cursor: pointer;
+    }
+    #overlay {
+      display: none;
+      position: absolute;
+      top: 40%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: white;
+      padding: 20px 30px;
+      border-radius: 10px;
+      font-size: 18px;
+      z-index: 1000;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
-    <div id="info">Drag to rotate, scroll/pinch to zoom</div>
-    <div id="error" style="display: none;">Error: Failed to load resources. Check console for details.</div>
-    <div id="text-display"></div>
-    <button id="button1" class="overlay-button">Button 1</button>
-    <button id="button2" class="overlay-button">Button 2</button>
-    <button id="button3" class="overlay-button">Button 3</button>
-    <script src="three.min.js"></script>
-    <script>
-        // Verify Three.js loaded
-        if (typeof THREE === 'undefined') {
-            console.error('Three.js failed to load');
-            document.getElementById('error').textContent = 'Error: Failed to load three.min.js. Ensure the file is in the same folder as index2.html.';
-            document.getElementById('error').style.display = 'block';
-            throw new Error('Three.js not loaded');
+  <div id="viewer"></div>
+  <canvas id="minimap"></canvas>
+  <div id="overlay">Hello World</div>
+
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css" />
+
+  <script>
+    const rooms = {
+      room1: {
+        panorama: 'office.jpg',
+        hotspots: [
+          { pitch: 10, yaw: 100, type: 'navigation', target: 'room2' },
+          { pitch: 5, yaw: 20, type: 'info' },
+          { pitch: -10, yaw: -30, type: 'info' },
+          { pitch: 15, yaw: 60, type: 'info' }
+        ]
+      },
+      room2: {
+        panorama: 'https://pannellum.org/images/bma-1.jpg',
+        hotspots: [
+          { pitch: 0, yaw: -100, type: 'navigation', target: 'room1' }
+        ]
+      }
+    };
+
+    let currentRoom = 'room1';
+
+    const viewer = pannellum.viewer('viewer', {
+      default: {
+        firstScene: 'room1',
+        sceneFadeDuration: 1000
+      },
+      scenes: {
+        room1: {
+          type: 'equirectangular',
+          panorama: rooms.room1.panorama,
+          hotSpots: rooms.room1.hotspots.map(h => ({
+            pitch: h.pitch,
+            yaw: h.yaw,
+            type: 'custom',
+            createTooltipFunc: hotspotCreator,
+            createTooltipArgs: h
+          }))
+        },
+        room2: {
+          type: 'equirectangular',
+          panorama: rooms.room2.panorama,
+          hotSpots: rooms.room2.hotspots.map(h => ({
+            pitch: h.pitch,
+            yaw: h.yaw,
+            type: 'custom',
+            createTooltipFunc: hotspotCreator,
+            createTooltipArgs: h
+          }))
         }
-        console.log('Three.js loaded successfully');
-    </script>
-    <script src="OrbitControls.js"></script>
-    <script>
-        // Verify OrbitControls loaded
-        if (typeof THREE.OrbitControls === 'undefined') {
-            console.error('OrbitControls failed to load');
-            document.getElementById('error').textContent = 'Error: Failed to load OrbitControls.js. Ensure the file is in the same folder as index2.html.';
-            document.getElementById('error').style.display = 'block';
-            throw new Error('OrbitControls not loaded');
-        }
-        console.log('OrbitControls loaded successfully');
+      }
+    });
 
-        // Check WebGL support
-        if (!window.WebGLRenderingContext) {
-            console.error('WebGL not supported');
-            document.getElementById('error').textContent = 'Error: WebGL not supported by your browser.';
-            document.getElementById('error').style.display = 'block';
-            throw new Error('WebGL not supported');
-        }
+    function hotspotCreator(hotSpotDiv, args) {
+      hotSpotDiv.classList.add('hotspot');
 
-        // Initialize scene, camera, and renderer
-        const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x333333); // Gray background to confirm rendering
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({ antialias: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(window.devicePixelRatio);
-        document.body.appendChild(renderer.domElement);
-        console.log('Renderer initialized');
+      if (args.type === 'navigation') {
+        hotSpotDiv.textContent = '⤴';
+        hotSpotDiv.title = 'Go to another room';
+        hotSpotDiv.addEventListener('click', () => switchRoom(args.target));
+      } else {
+        hotSpotDiv.textContent = 'i';
+        hotSpotDiv.title = 'More info';
+        hotSpotDiv.addEventListener('click', () => showOverlay('Hello World, this pop up just show you it is possible to input text or images over the popups'));
+      }
+    }
 
-        // Verify image path
-        const imagePath = 'panorama.jpg';
-        console.log('Attempting to load image:', imagePath);
+    function switchRoom(roomName) {
+      currentRoom = roomName;
+      viewer.loadScene(roomName);
+      drawMiniMap();
+    }
 
-        // Load the equirectangular image
-        const textureLoader = new THREE.TextureLoader();
-        textureLoader.load(
-            imagePath,
-            function (texture) {
-                console.log('Texture loaded successfully');
-                // Create a sphere geometry (inside-out)
-                const geometry = new THREE.SphereGeometry(500, 60, 40);
-                geometry.scale(-1, 1, 1); // Flip to show texture inside
+    function showOverlay(text) {
+      const overlay = document.getElementById('overlay');
+      overlay.textContent = text;
+      overlay.style.display = 'block';
+      setTimeout(() => {
+        overlay.style.display = 'none';
+      }, 2000);
+    }
 
-                // Create material with texture
-                const material = new THREE.MeshBasicMaterial({
-                    map: texture,
-                    side: THREE.DoubleSide
-                });
+    function drawMiniMap() {
+      const canvas = document.getElementById('minimap');
+      const ctx = canvas.getContext('2d');
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-                // Create mesh and add to scene
-                const sphere = new THREE.Mesh(geometry, material);
-                scene.add(sphere);
-                console.log('Sphere added to scene');
-            },
-            function (progress) {
-                console.log('Texture loading progress:', (progress.loaded / progress.total * 100).toFixed(2) + '%');
-            },
-            function (error) {
-                console.error('Error loading texture:', error);
-                document.getElementById('error').textContent = 'Error: Failed to load panorama.jpg. Ensure the file is in the same folder as index2.html.';
-                document.getElementById('error').style.display = 'block';
-            }
-        );
+      // Room dots
+      ctx.fillStyle = 'white';
+      ctx.beginPath();
+      ctx.arc(50, 75, 10, 0, 2 * Math.PI);
+      ctx.fill();
 
-        // Position camera inside the sphere
-        camera.position.set(0, 0, 0);
-        console.log('Camera positioned');
+      ctx.beginPath();
+      ctx.arc(100, 75, 10, 0, 2 * Math.PI);
+      ctx.fill();
 
-        // Initialize OrbitControls
-        const controls = new THREE.OrbitControls(camera, renderer.domElement);
-        controls.enableDamping = true;
-        controls.dampingFactor = 0.05;
-        controls.rotateSpeed = 0.5;
-        controls.enableZoom = true;
-        controls.zoomSpeed = 1.2;
-        controls.enablePan = false;
-        controls.minDistance = 1;
-        controls.maxDistance = 500;
-        controls.autoRotate = false;
-        console.log('OrbitControls initialized');
+      ctx.strokeStyle = 'white';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(50, 75);
+      ctx.lineTo(100, 75);
+      ctx.stroke();
 
-        // Handle window resize
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth / window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-            console.log('Window resized');
-        });
+      // Highlight current room
+      ctx.fillStyle = 'lime';
+      ctx.beginPath();
+      ctx.arc(currentRoom === 'room1' ? 50 : 100, 75, 5, 0, 2 * Math.PI);
+      ctx.fill();
+    }
 
-        // Button interaction
-        const textDisplay = document.getElementById('text-display');
-        function showText() {
-            textDisplay.textContent = 'hello World';
-            textDisplay.style.display = 'block';
-            console.log('Button clicked, displaying: hello World');
-            setTimeout(() => {
-                textDisplay.style.display = 'none';
-                console.log('Text hidden');
-            }, 3000); // Hide after 3 seconds
-        }
-        document.getElementById('button1').addEventListener('click', showText);
-        document.getElementById('button2').addEventListener('click', showText);
-        document.getElementById('button3').addEventListener('click', showText);
-
-        // Animation loop
-        function animate() {
-            requestAnimationFrame(animate);
-            controls.update();
-            renderer.render(scene, camera);
-        }
-        animate();
-        console.log('Animation loop started');
-
-        // Log interaction events
-        renderer.domElement.addEventListener('mousedown', () => console.log('Mouse down'));
-        renderer.domElement.addEventListener('mousemove', () => console.log('Mouse move'));
-        renderer.domElement.addEventListener('touchstart', () => console.log('Touch start'));
-    </script>
+    drawMiniMap();
+  </script>
 </body>
 </html>
