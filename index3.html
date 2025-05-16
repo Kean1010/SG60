@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Find the Item - 1980</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: sans-serif;
+    }
+
+    .game-container {
+      position: relative;
+      width: 100%;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .game-image {
+      width: 100%;
+      display: block;
+    }
+
+    .hotspot {
+	position: absolute;
+	width: 52px;
+	height: 44px;
+	border-radius: 50%;
+	cursor: pointer;
+	background-color: rgba(255, 0, 0, 0.0); /* Transparent click area */
+    }
+
+    .found-indicator {
+      position: absolute;
+      width: 40px;
+      height: 40px;
+      border: 3px solid red;
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hud {
+      position: fixed;
+      top: 10px;
+      left: 10px;
+      background: rgba(0, 0, 0, 0.6);
+      color: white;
+      padding: 10px 15px;
+      border-radius: 8px;
+      font-size: 18px;
+      z-index: 10;
+    }
+
+    .time-up {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: rgba(0, 0, 0, 0.8);
+      color: red;
+      padding: 30px;
+      font-size: 32px;
+      border-radius: 12px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+<div class="hud">
+  Time Left: <span id="timer">03:00</span><br>
+  Items Found: <span id="foundCount">0</span> / <span id="totalCount">0</span>
+</div>
+
+<div class="game-container" id="gameContainer">
+  <img src="1980.jpg" alt="1980 Scene" class="game-image" id="gameImage">
+
+  <!-- Hotspots (adjust positions as needed) -->
+  <div class="hotspot" style="top: 241px; left: 150px;"></div>
+  <div class="hotspot" style="top: 559px; left: 370px;"></div>
+  <div class="hotspot" style="top: 235px; left: 523px;"></div>
+</div>
+
+<div class="time-up" id="timeUpMessage">Time's up!</div>
+
+<script>
+  const hotspots = document.querySelectorAll('.hotspot');
+  const foundCounter = document.getElementById('foundCount');
+  const totalCounter = document.getElementById('totalCount');
+  const timeUpMessage = document.getElementById('timeUpMessage');
+  const gameContainer = document.getElementById('gameContainer');
+
+  let found = 0;
+  const total = hotspots.length;
+  totalCounter.textContent = total;
+
+  hotspots.forEach(hotspot => {
+    hotspot.addEventListener('click', () => {
+      if (hotspot.classList.contains('found')) return;
+
+      hotspot.classList.add('found');
+      found++;
+
+      const indicator = document.createElement('div');
+      indicator.className = 'found-indicator';
+      indicator.style.top = hotspot.style.top;
+      indicator.style.left = hotspot.style.left;
+      gameContainer.appendChild(indicator);
+
+      foundCounter.textContent = found;
+    });
+  });
+
+  // Timer
+  let timeLeft = 180; // 3 minutes in seconds
+  const timerDisplay = document.getElementById('timer');
+
+  function updateTimer() {
+    const minutes = String(Math.floor(timeLeft / 60)).padStart(2, '0');
+    const seconds = String(timeLeft % 60).padStart(2, '0');
+    timerDisplay.textContent = `${minutes}:${seconds}`;
+
+    if (timeLeft > 0) {
+      timeLeft--;
+    } else {
+      clearInterval(timerInterval);
+      timeUpMessage.style.display = 'block';
+      hotspots.forEach(h => h.style.pointerEvents = 'none');
+    }
+  }
+
+  const timerInterval = setInterval(updateTimer, 1000);
+  updateTimer();
+</script>
+
+</body>
+</html>
