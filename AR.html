@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>360° Virtual Tour</title>
-  <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
+  <title>360° Virtual Tour with Hotspot</title>
+  <script src="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.js"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/pannellum@2.5.6/build/pannellum.css"/>
   <style>
     html, body {
@@ -23,14 +23,50 @@
   <script>
     pannellum.viewer('panorama', {
       type: "equirectangular",
-      panorama: "your-360-image.jpg",  // Replace with your image path
+      panorama: "your-360-image.jpg", // Replace with your panorama image path
       autoLoad: true,
-      autoRotate: -2,
       showControls: true,
-      compass: true,
-      title: "My 360° Room",
-      author: "Your Name"
+
+      // Optional scene title
+      title: "Main Room",
+
+      // Add one or more hotspots
+      hotSpots: [
+        {
+          pitch: 5,      // up/down angle in degrees
+          yaw: 120,      // left/right angle in degrees
+          type: "info",
+          text: "Go to Next Room",
+          URL: "next-room.html"   // Link to another page or you can change scene
+        },
+        {
+          pitch: -3,
+          yaw: 60,
+          type: "custom",
+          createTooltipFunc: hotspotWithImage,
+          createTooltipArgs: {
+            imageURL: "info-icon.png",
+            label: "Look here!"
+          }
+        }
+      ]
     });
+
+    // Optional: Create a custom hotspot (e.g., icon + label)
+    function hotspotWithImage(hotSpotDiv, args) {
+      hotSpotDiv.classList.add('custom-hotspot');
+      let img = document.createElement('img');
+      img.src = args.imageURL;
+      img.style.width = '32px';
+      hotSpotDiv.appendChild(img);
+      if (args.label) {
+        let span = document.createElement('span');
+        span.innerText = args.label;
+        span.style.color = 'white';
+        span.style.marginLeft = '8px';
+        hotSpotDiv.appendChild(span);
+      }
+    }
   </script>
 </body>
 </html>
